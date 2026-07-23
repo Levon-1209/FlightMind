@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Vols</title>
+</head>
+
+<body>
+    <h1>Vols en cours</h1>
+    <button id="load">Charger</button>
+    <button id="delete">Effacer</button>
+    <ul id="results"></ul>
+    <script>
+        const buttonLoad = document.getElementById("load");
+        const list = document.getElementById("results");
+        const buttonDelete = document.getElementById("delete")
+
+        const flights = [
+            { callsign: "AFR1892", origin: "France", altitude: 10668 },
+            { callsign: "RYR4521", origin: "Ireland", altitude: 8534 },
+            { callsign: "EZY8734", origin: "United Kingdom", altitude: null}
+        ];
+
+        buttonLoad.addEventListener("click", () => {
+            list.innerHTML = "";
+            
+            for (const flight of flights) {
+                const item = document.createElement("li");
+
+                let altitudeText;
+
+            if (flight.altitude === null) {
+                altitudeText = "No Data"
+            } else {
+                altitudeText = `${flight.altitude} m`;
+            }
+
+                item.textContent = `${flight.callsign}  -  ${flight.origin}  -  ${altitudeText}`;
+                list.appendChild(item);
+            }
+        });
+
+        buttonDelete.addEventListener("click", () => {
+            list.innerHTML = "";
+        });
+
+        async function loadFlights() {
+            try{
+                const target = "https://opensky-network.org/api/states/all?lamin=42.5&lomin=4.5&lamax=44.5&lomax=7.5";
+                const url = "https://api.allorigins.win/raw?url=" + encodeURIComponent(target);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+                console.error("Echec du chargement :", error);
+            }
+        }
+
+        loadFlights();
+    </script>
+</body>
+
+</html>
