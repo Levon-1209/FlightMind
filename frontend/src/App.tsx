@@ -11,18 +11,33 @@ type Flight = {
 
 function App() {
   const [displayedFlights, setDisplayedFlights] = useState<Flight[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function loadFlights() {
-    const response = await fetch("http://localhost:8000/flights");
-    const data: Flight[] = await response.json();
-    setDisplayedFlights(data);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      
+      const response = await fetch("http://localhost:8000/flights");
+      const data: Flight[] = await response.json();
+      setDisplayedFlights(data);
+    } catch (err) {
+      setError("impossible de charger les vols, verifiez que le serveur est demarre")
+      console.error(err)
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <div>
       <h1>Vols en cours</h1>
-      <button onClick={loadFlights}>Charger</button>
+      <button onClick={loadFlights} disabled={isLoading}>Charger</button>
       <button onClick={() => setDisplayedFlights([])}>Effacer</button>
+      {isLoading && <p>Chargement...</p>}
+      {error && <p>{error}</p>}
       <ul>
         {displayedFlights.map((flight) => {
           let altitudeText;
