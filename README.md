@@ -104,7 +104,6 @@ reste affiché, car c'est lui qui est lisible par un humain.
 ## Limites connues
 
 - Pas de cache : dépendance directe au quota de l'API OpenSky
-- Pas de gestion d'erreur réseau côté front
 - Zone géographique codée en dur
 - Aucun test automatisé
 
