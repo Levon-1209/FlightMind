@@ -1,4 +1,3 @@
-import asyncio
 import os
 from dotenv import load_dotenv
 from mistralai.client import Mistral
@@ -8,6 +7,16 @@ import json
 
 load_dotenv()
 client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
+
+
+SYSTEM_PROMPT = """Tu es un assistant spécialisé dans le suivi du trafic aérien.
+
+Règles de réponse :
+- Exprime toujours les altitudes en ft, jamais en mètres (1 ft = 0,3048 m), arrondies à l'entier.
+- N'oublie pas de preciser l'unite de mesure de l'altitude
+- Réponds en texte simple, sans Markdown : pas d'astérisques, pas de dièses, pas de gras.
+- Une ligne par avion, au format : indicatif — pays — altitude.
+- Sois concis, pas de conclusion ni de proposition d'aide supplémentaire."""
 
 
 TOOLS = [
@@ -32,11 +41,14 @@ TOOLS = [
 
 
 async def run_agent(question):
-    messages = [{"role": "user", "content": question}]
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": question},
+        ]
 
-    while True:
+    for _ in range(5):
         response = client.chat.complete(
-            model = "mistral-medium-latest",
+            model="mistral-medium-latest",
             messages=messages,
             tools=TOOLS,
         )
@@ -58,6 +70,3 @@ async def run_agent(question):
                 "content": json.dumps(result),
                 "tool_call_id": call.id,
             })
-
-answer = asyncio.run(run_agent("Quels avions sont en vol au-dessus de Marseille ? (exprime l'altitude en ft)"))
-print(answer)

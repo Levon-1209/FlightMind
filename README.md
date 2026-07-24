@@ -26,8 +26,14 @@ et gère les champs absents.
 - **Front** : React + TypeScript (Vite)
 - **Back** : FastAPI + httpx (Python)
 - **Données** : API OpenSky Network
+- **LLM** : Mistral (SDK `mistralai`), appel d'outils
 
 ## Lancer le projet
+Créer un fichier `backend/.env` (ignoré par Git) :
+
+```
+MISTRAL_API_KEY=votre_clé
+```
 
 ### Prérequis
 
@@ -40,7 +46,7 @@ et gère les champs absents.
 cd backend
 python3 -m venv .venv
 source .venv/bin/activate
-pip install "fastapi[standard]" httpx
+pip install "fastapi[standard]" httpx mistralai python-dotenv
 fastapi dev main.py
 ```
 
@@ -59,6 +65,42 @@ Disponible sur `http://localhost:5173`.
 Les deux services doivent tourner en parallèle.
 
 ## Choix techniques
+
+### Assistant conversationnel
+
+L'utilisateur pose sa question en langage naturel. Le modèle reçoit la
+description des outils disponibles et répond soit par du texte, soit par
+un appel de fonction avec ses arguments. Le serveur exécute l'outil,
+ajoute le résultat à l'historique et relance le modèle, jusqu'à obtenir
+une réponse rédigée.
+
+Le modèle n'exécute rien lui-même et n'a aucune mémoire entre deux appels :
+c'est le serveur qui conserve l'historique et le renvoie intégralement à
+chaque tour.
+
+# Pourquoi pas de framework d'orchestration ?
+
+Je voulais comprendre le mécanisme avant de l'abstraire. Écrire la boucle
+à la main rend visible ce qu'un framework masque : le modèle n'exécute rien,
+l'historique est reconstruit et renvoyé à chaque tour, un appel d'outil n'est
+qu'un JSON dans une réponse.
+
+Le besoin actuel est simple — un seul outil, un flux linéaire — et tient en
+une vingtaine de lignes. LangChain et LangGraph résolvent des cas que je n'ai
+pas encore : branchements conditionnels, sous-agents, reprise sur erreur,
+exécution parallèle.
+
+Coût : quand les outils se multiplieront et que le flux se ramifiera, cette
+boucle deviendra plus coûteuse à maintenir qu'un framework. Le choix vaut
+pour l'état actuel du projet, pas définitivement.
+
+
+La boucle est bornée à cinq tours pour éviter qu'un modèle qui rappelle
+indéfiniment le même outil ne bloque la requête.
+
+Coût : la conversion mètres/pieds existe à deux endroits, dans le front et
+dans le prompt système. La déplacer dans `fetch_flights` supprimerait la
+duplication mais ferait perdre l'unité brute de la source.
 
 ### Pourquoi un back-end ?
 
@@ -112,3 +154,6 @@ reste affiché, car c'est lui qui est lisible par un humain.
 - Couche conversationnelle : agent LLM avec appel d'outils sur les données de vols
 - Persistance en base (SQLite) et mise en cache des réponses OpenSky
 - Conteneurisation Docker et déploiement
+- Aucune persistance : l'historique de conversation est perdu à chaque requête
+- Coût en tokens non maîtrisé : tous les vols de la zone sont envoyés au modèle
+- Le respect du format de réponse repose sur le prompt, sans garantie stricte
