@@ -145,7 +145,6 @@ reste affiché, car c'est lui qui est lisible par un humain.
 ## Limites connues
 
 - Pas de cache : dépendance directe au quota de l'API OpenSky
-- Zone géographique codée en dur
 - Aucun test automatisé
 - Aucune persistance : l'historique de conversation est perdu à chaque requête
 - Coût en tokens non maîtrisé : tous les vols de la zone sont envoyés au modèle
@@ -153,6 +152,5 @@ reste affiché, car c'est lui qui est lisible par un humain.
 
 ## Prochaines étapes
 
-- Couche conversationnelle : agent LLM avec appel d'outils sur les données de vols
 - Persistance en base (SQLite) et mise en cache des réponses OpenSky
 - Conteneurisation Docker et déploiement
