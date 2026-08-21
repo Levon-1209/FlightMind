@@ -5,8 +5,7 @@ Assistant de monitoring de vols en temps réel.
 ## Aperçu
 
 FlightMind permet de suivre les avions présents dans une zone géographique
-donnée — actuellement un rectangle au-dessus de la Provence — à partir des
-données de position diffusées par les transpondeurs.
+donnée — à partir des données de position diffusées par les transpondeurs.
 
 Projet personnel en cours de développement, construit pour apprendre le
 développement full-stack. La couche conversationnelle est la prochaine étape.
