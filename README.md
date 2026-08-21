@@ -77,7 +77,7 @@ Le modèle n'exécute rien lui-même et n'a aucune mémoire entre deux appels :
 c'est le serveur qui conserve l'historique et le renvoie intégralement à
 chaque tour.
 
-# Pourquoi pas de framework d'orchestration ?
+### Pourquoi pas de framework d'orchestration ?
 
 Je voulais comprendre le mécanisme avant de l'abstraire. Écrire la boucle
 à la main rend visible ce qu'un framework masque : le modèle n'exécute rien,
