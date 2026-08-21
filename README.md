@@ -154,3 +154,5 @@ reste affiché, car c'est lui qui est lisible par un humain.
 
 - Persistance en base (SQLite) et mise en cache des réponses OpenSky
 - Conteneurisation Docker et déploiement
+- Pas de cloisonnement par session : l'historique est partagé entre 
+  utilisateurs, deux conversations simultanées se mélangeraient
