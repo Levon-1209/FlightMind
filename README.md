@@ -8,7 +8,7 @@ FlightMind permet de suivre les avions présents dans une zone géographique
 donnée — à partir des données de position diffusées par les transpondeurs.
 
 Projet personnel en cours de développement, construit pour apprendre le
-développement full-stack. La couche conversationnelle est la prochaine étape.
+développement full-stack.
 
 ## Architecture
 
